@@ -16,7 +16,7 @@ END//
 DELIMITER ;
 
 
-#1 - Retornar os produtos da Classificação 003 e que a unidade de medida não seja 'UN'
+#1 - Retornar os produtos da Classificação 003 e que a unidade de medida não seja 'UN' (R: 139 registros);
 SELECT 
     * 
     FROM produto 
@@ -44,7 +44,7 @@ SELECT
 WHERE CODIGO_CLASSIFICACAO = '003' AND UNIDADE = 'UN' AND QUANTIDADE BETWEEN 5 AND 7 AND VALOR < 10;
 
 
-#3 - Valor total dos 'biscoito' da base de dados;
+#3 - Valor total dos 'biscoito' da base de dados (R: 3021);
 SELECT 
     SUM(VALOR * QUANTIDADE) AS VALOR_TOTAL 
     FROM produto 
@@ -58,7 +58,8 @@ SELECT
 WHERE DESCRICAO LIKE '%martelo%' 
 AND NOT(CODIGO_CLASSIFICACAO = '001');
 
-#5 - Retornar os produtos da classificação EPI que estejam em menos de 5 caixas;
+
+#5 - Retornar os produtos da classificação EPI que estejam em menos de 5 caixas (R: 2 registros);
 SELECT 
 	p.* 
     FROM produto p 
@@ -71,7 +72,7 @@ SELECT
 WHERE p.CODIGO_CLASSIFICACAO = codigoClassificacao('EPI/EPC') AND (UNIDADE = 'CX' AND QUANTIDADE < 5);
 
 
-#6 - Retornar os produtos da Classificação EPI que NÃO ESTEJA em caixas e sua quantidade esteja em 10 e 50;
+#6 - Retornar os produtos da Classificação EPI que NÃO ESTEJA em caixas e sua quantidade esteja em 10 e 50 (R:9 registros)
 SELECT 
 	*
     FROM produto p 
@@ -83,9 +84,10 @@ SELECT
     FROM produto p 
 WHERE p.CODIGO_CLASSIFICACAO = (SELECT c.CODIGO FROM classificacao c WHERE c.DESCRICAO = 'EPI/EPC') AND (UNIDADE <> 'CX' AND QUANTIDADE BETWEEN 10 AND 50);
 
+
 /*7 - Retornar todos registros da classificação UNIFORMES com o nome
 'camiseta e todos os produtos da classificação MATERIAL ESPORTIVO
-e com nome 'bola' */
+e com nome 'bola' R: 11 registros */
 SELECT 
 	* 
 	FROM produto p 
@@ -97,9 +99,10 @@ SELECT
 WHERE P.CODIGO_CLASSIFICACAO = codigoClassificacao('Materiais Esportivos') AND p.DESCRICAO LIKE '%bola%'
 ORDER BY CODIGO_CLASSIFICACAO, DESCRICAO;
 
+
 /*8 - Retornar a média do valor dos produtos que a quantidade esteja entre
 2 e 4, com valor inferior a 50, que não seja material de construção e que
-não seja um 'copo'; */
+não seja um 'copo'; R: 18.8688 */
 SELECT 
 	AVG(p.VALOR) AS media_valor
 	FROM produto p 
@@ -107,11 +110,13 @@ WHERE p.QUANTIDADE BETWEEN 2 AND 4
 AND p.VALOR < 50
 AND p.CODIGO_CLASSIFICACAO <> codigoClassificacao('Materiais de Construção') AND p.DESCRICAO NOT LIKE '%copo%';
 
-#9 - Retornar o quantidade total de pacotes (PCT) dos produtos alimenticios
+
+#9 - Retornar o quantidade total de pacotes (PCT) dos produtos alimenticios (R: 1165)
 SELECT 
 	SUM(p.QUANTIDADE) AS qtd_total
 FROM produto p 
 WHERE p.CODIGO_CLASSIFICACAO = codigoClassificacao('Produtos Alimentícios') AND p.UNIDADE = 'PCT';
+
 
 /*10 - Retornar apenas o numero total de produtos cadastrados com
 unidade pacote e que seja da classificação de alimentos
@@ -167,3 +172,8 @@ WHERE p.CODIGO_CLASSIFICACAO = codigoClassificacao('Veterinária');
 
 /*16 - Contar Quantos produtos são da categoria de Aviamentos por
 unidade. EX: (20 produtos - UN; 2 PRODUTOS - PCT) */
+SELECT 
+	CONCAT(COUNT(*), ' produto(s) - ', p.UNIDADE) AS total 
+    FROM produto p 
+WHERE p.CODIGO_CLASSIFICACAO = '003'
+GROUP BY p.UNIDADE; 
