@@ -20,10 +20,25 @@ ORDER BY qtd_vendas_vendedor DESC;
 
 
 # 3) Melhor vendedor nos 3 primeiros meses do ano ? 
-
+SELECT 
+	a.codvendedor, 
+	a.nome, 
+	COUNT(b.codvenda) AS total 
+FROM vendedores a
+	LEFT JOIN vendas b ON a.codvendedor = b.codvendedor
+WHERE b.datavenda >= '2023-01-01' AND b.datavenda <= '2023-03-31'
+GROUP BY a.codvendedor
+HAVING COUNT(b.codvenda) = (
+	SELECT 
+		COUNT(b.codvenda) AS total
+	FROM vendedores a 
+		LEFT JOIN vendas b ON a.codvendedor = b.codvendedor
+	WHERE b.datavenda >= '2023-01-01' AND b.datavenda <= '2023-03-31'
+	GROUP BY a.codvendedor
+	ORDER BY 1 DESC LIMIT 1
+);
 
 # 4) A melhor venda ( valor mais alto) ?
-
 SELECT MAX(vm.valor_mais_alto) AS melhor_venda FROM (
 	SELECT 
 		SUM(p.QUANTIDADE * p.VALOR) AS valor_mais_alto
@@ -60,6 +75,16 @@ LIMIT 1;
 
 
 # 7) Qual é o melhor cliente ?
+SELECT 
+	ce.nome as cliente,
+	COUNT(v.codVenda) AS qtd_vendas_cliente
+FROM vendas v
+	RIGHT JOIN cliente ce ON v.codvendedor = ce.codcliente
+GROUP BY ce.nome
+HAVING COUNT(v.codvenda) >= 0
+ORDER BY qtd_vendas_cliente DESC
+LIMIT 1;
+
 
 # 8) O pior vendedor ?
 SELECT 
@@ -71,8 +96,3 @@ GROUP BY ve.codvendedor
 HAVING COUNT(v.codvenda) >= @qtdvenda
 ORDER BY qtd_vendas_vendedor ASC
 LIMIT 1;
-
-
-/** 9) Comissão de 10% para o vendedor que seu total 
-de vendas que for acima da média do mês de 
-todos vendedores ? */
