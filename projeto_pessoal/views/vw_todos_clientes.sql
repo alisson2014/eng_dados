@@ -1,3 +1,4 @@
+#QUICKDRAW
 CREATE VIEW vw_todos_clientes AS
 SELECT 
     c.id AS id_cliente,
