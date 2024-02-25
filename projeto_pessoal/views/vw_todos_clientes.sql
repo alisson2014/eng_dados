@@ -7,13 +7,11 @@ SELECT
     DATE_FORMAT(c.data_nascimento, '%d/%m/%Y') AS dataNascimento,
     IFNULL(c.telefone, 'Não cadastrado') AS telefone,
     c.email,
-    e.cep,
-    CONCAT(e.rua, ', ', e.numero) AS logradouro,
-    e.bairro,
-    cd.nome AS cidade,
-    uf.descricao AS estado
+   	vwe.cep,
+    vwe.logradouro,
+    vwe.bairro,
+    vwe.cidade,
+    vwe.estado
 FROM cliente c
-	INNER JOIN endereco e ON c.endereco_id = e.id
-    INNER JOIN cidade cd ON cd.id = e.cidade_id
-    INNER JOIN estado uf ON cd.estado_id = uf.id
+	INNER JOIN vw_todos_enderecos vwe ON c.endereco_id = vwe.id
 ORDER BY data_nascimento;
