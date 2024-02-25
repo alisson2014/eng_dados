@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 # CRIAR A TABELA INICIAL DE CLIENTE:
 CREATE TABLE IF NOT EXISTS cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -8,7 +10,6 @@ CREATE TABLE IF NOT EXISTS cliente (
 );
 
 # POPULAR A TABELA:
-START TRANSACTION;
 INSERT INTO cliente (cpf, nome, sexo, data_nascimento) VALUES 
 ('119.466.877-17', 'Juan Oliveira', 'm', '2001-02-12'),
 ('411.651.788-15', 'Ana júlia', NULL, '1999-11-02'),
@@ -17,11 +18,9 @@ INSERT INTO cliente (cpf, nome, sexo, data_nascimento) VALUES
 ('411.651.788-19', 'Jennifer ferreira', 'f', '1996-06-07'),
 ('153.185.020-11', 'Alisson Vinicius', 'm', '1995-05-30'),
 ('188.125.780-55', 'Erica paes', 'f', '2003-08-22');
-COMMIT;
 
 
 # ADICIONAR NOVAS COLUNAS DE EMAIL E TELEFONE
-START TRANSACTION;
 
 ALTER TABLE cliente 
 ADD email VARCHAR(60),
@@ -52,7 +51,6 @@ ALTER TABLE cliente
 MODIFY email VARCHAR(60) NOT NULL,
 ADD CONSTRAINT unique_email UNIQUE (email);
 
-COMMIT;
 
 # CRIAR TABELA DE ESTADOS:
 CREATE TABLE IF NOT EXISTS estado (
@@ -62,7 +60,6 @@ CREATE TABLE IF NOT EXISTS estado (
 );
 
 # POPULAR A TABELA DE ESTADOS:
-START TRANSACTION;
 INSERT INTO estado (uf, descricao) VALUES
 ('AC', 'Acre'),
 ('AL', 'Alagoas'),
@@ -91,7 +88,6 @@ INSERT INTO estado (uf, descricao) VALUES
 ('SP', 'São Paulo'),
 ('SE', 'Sergipe'),
 ('TO', 'Tocantins');
-COMMIT;
 
 # CRIAR TABELA DE CIDADES:
 CREATE TABLE IF NOT EXISTS cidade (
@@ -102,7 +98,6 @@ CREATE TABLE IF NOT EXISTS cidade (
 );
 
 # POPULAR TABELA DE CIDADES:
-START TRANSACTION;
 INSERT INTO cidade (nome, estado_id) VALUES 
 ('Londrina', 16),
 ('Canoas', 21),
@@ -111,7 +106,6 @@ INSERT INTO cidade (nome, estado_id) VALUES
 ('Santana de Parnaíba', 25),
 ('Ipatinga', 13),
 ('Campo Mourão', 16);
-COMMIT;
 
 # CRIAR A TABELA INICIAL DE ENDEREÇO:
 CREATE TABLE IF NOT EXISTS endereco (
@@ -125,7 +119,6 @@ CREATE TABLE IF NOT EXISTS endereco (
 );
 
 # POPULAR TABELA DE ENDEREÇOS:
-START TRANSACTION;
 INSERT INTO endereco (rua, numero, bairro, cidade_id, cep) VALUES 
 ('Rua Professor João Cândido', '150b', 'Centro', 1, '86010-001'),
 ('Travessa Dona Leopoldina', '1616', 'Fátima', 2, '92200-590'),
@@ -134,10 +127,8 @@ INSERT INTO endereco (rua, numero, bairro, cidade_id, cep) VALUES
 ('Alameda das Roseiras', '109', 'Morada dos Pinheiros (Aldeia da Serra)', 5, '06519-315'),
 ('Rua dos Caldeus', '80', 'Canaã', 6, '35164-143'),
 ('Rua Getúlio Ribeiro de Carvalho', '150', 'Conjunto Cafezal 1', 1, '86049-160');
-COMMIT;
 
 # ADICIONAR ENDEREÇOS NOS CLIENTES CADASTRADOS:
-START TRANSACTION;
 ALTER TABLE cliente
 ADD COLUMN endereco_id INT NULL;
 
@@ -152,4 +143,79 @@ UPDATE cliente SET endereco_id = 5 WHERE id = 7;
 ALTER TABLE cliente
 MODIFY endereco_id INT NOT NULL,
 ADD FOREIGN KEY (endereco_id) REFERENCES endereco(id);
+
+# CRIAR TABELA DE CATEGORIA:
+CREATE TABLE IF NOT EXISTS categoria (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE 
+);
+
+# POPULAR TABELA DE CATEGORIA:
+INSERT INTO categoria (nome) VALUES 
+('Eletrônicos'),
+('Eletrodomésticos'),
+('Segurança'),
+('Automação'),
+('Ferramentas'),
+('Moda');
+
+# CRIAR TABELA DE PRODUTOS:
+CREATE TABLE IF NOT EXISTS produto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(80) NOT NULL,
+    valor DECIMAL(8, 2) NOT NULL,
+    categoria_id INT NOT NULL,
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+);
+
+# POPULAR TABELA DE PRODUTOS:
+INSERT INTO produto (nome, valor, categoria_id) VALUES 
+('Iphone 12', 3899.90, 1),
+('Gelageira Consul', 3599.99, 2),
+('Câmera de segurança', 600, 3),
+('Alexa', 899.90, 4),
+('Furadeira com bateria', 290.50, 5),
+('Tênis nike preto', 260, 6),
+('Samsung Galaxy S22+', 2999.10, 1),
+('Iphone 14 pro max', 6900.89, 1),
+('Kit 5 chaves multiuso', 459.90, 5),
+('Aspirador robô', 990.99, 2),
+('Kit 3 camisas dry fit', 200, 6);
+
+# CRIAR A TABELA DE ORÇAMENTOS
+CREATE TABLE IF NOT EXISTS orcamento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL,
+    data DATE NOT NULL,
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id) 
+);
+
+# POPULAR TABELA DE ORÇAMENTOS:
+INSERT INTO orcamento (cliente_id, data) VALUES 
+(4, '2024-02-15'),
+(5, '2024-02-22'),
+(6, '2024-02-24'),
+(6, '2024-02-25'),
+(7, '2023-09-25');
+
+# CRIAR TABELA DE PRODUTOS ORÇAMENTOS:
+CREATE TABLE IF NOT EXISTS produtosorcamento (
+    produto_id INT(11) NOT NULL,
+    orcamento_id INT(11) NOT NULL,
+    quantidade INT(11) NOT NULL,
+    PRIMARY KEY (produto_id, orcamento_id),
+    KEY orcamento_id(orcamento_id),
+    CONSTRAINT produtosorcamento_ibfk_1 FOREIGN KEY (orcamento_id) REFERENCES orcamento(id),
+    CONSTRAINT produtosorcamento_ibfk_2 FOREIGN KEY (produto_id) REFERENCES produto(id)
+);
+
+# POPULAR A TABELA DE ProdutosOrcamentos:
+INSERT INTO produtosorcamento (orcamento_id, produto_id, quantidade) VALUES 
+(1, 1, 1),
+(1, 4, 2),
+(2, 3, 3),
+(3, 2, 1),
+(4, 10, 2),
+(5, 6, 2);
+
 COMMIT;
