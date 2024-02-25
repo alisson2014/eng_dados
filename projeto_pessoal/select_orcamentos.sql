@@ -1,0 +1,1 @@
+SELECT * FROM vw_todos_orcamentos vwo;

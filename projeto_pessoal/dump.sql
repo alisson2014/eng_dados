@@ -212,7 +212,6 @@ CREATE TABLE IF NOT EXISTS produtosorcamento (
 # POPULAR A TABELA DE ProdutosOrcamentos:
 INSERT INTO produtosorcamento (orcamento_id, produto_id, quantidade) VALUES 
 (1, 1, 1),
-(1, 4, 2),
 (2, 3, 3),
 (3, 2, 1),
 (4, 10, 2),
