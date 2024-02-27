@@ -1,9 +1,10 @@
 # VIEW PARA RETORNAR OS DADOS DOS ORÇAMENTOS:
 
-CREATE VIEW vw_todos_orcamentos AS
+CREATE OR REPLACE VIEW vw_todos_orcamentos AS
 SELECT 
 	o.id,
 	o.data,
+    c.id AS id_cliente,
     c.nome AS nome_cliente,
     p.nome AS nome_produto,
     p.valor,

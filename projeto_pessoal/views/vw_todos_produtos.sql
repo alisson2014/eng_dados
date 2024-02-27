@@ -1,9 +1,8 @@
-CREATE VIEW vw_todos_produtos AS
+CREATE OR REPLACE VIEW vw_todos_produtos AS
 SELECT 
 	p.id, 
     p.nome, 
-    p.valor AS valorNumerico,
-    CURRENCY_FORMAT(p.valor) AS valorMoeda,
+    p.valor,
     p.categoria_id,
     c.nome AS categoria
 FROM produto p

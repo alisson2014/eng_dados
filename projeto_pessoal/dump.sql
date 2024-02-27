@@ -217,4 +217,10 @@ INSERT INTO produtosorcamento (orcamento_id, produto_id, quantidade) VALUES
 (4, 10, 2),
 (5, 6, 2);
 
+# ADICIONAR NOVO CAMPO DE ATIVO NOS ESTADOS:
+ALTER TABLE estado 
+ADD COLUMN ativo ENUM('s', 'n') NOT NULL DEFAULT 's';
+
+UPDATE estado SET ativo = 'n' WHERE id IN (1, 3, 6, 11, 15);
+
 COMMIT;
