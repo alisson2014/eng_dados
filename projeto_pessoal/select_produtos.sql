@@ -69,3 +69,27 @@ SELECT
 	(SELECT nome FROM vw_todos_produtos WHERE valor = (SELECT MAX(valor) FROM vw_todos_produtos)) AS nome,
   	MAX(vwp.valor) AS valor
 FROM vw_todos_produtos vwp;
+
+/* 7. Trazer todos os produtos que possuem um reajuste ativo. */
+SELECT 
+	* 
+FROM vw_todos_produtos vwp 
+	INNER JOIN correcao_produto cp ON vwp.id = cp.produto_id
+WHERE CURDATE() BETWEEN cp.data_inicio AND cp.data_fim;
+
+/* 8. Trazer todos os produtos com reajuste previsto. */
+SELECT 
+	* 
+FROM vw_todos_produtos vwp 
+	INNER JOIN correcao_produto cp ON vwp.id = cp.produto_id
+WHERE cp.data_inicio > CURDATE();
+
+/* 9. Trazer todos os produtos que receberão um aumento no reajuste. */
+SELECT 
+	* 
+FROM vw_todos_produtos vwp 
+	INNER JOIN correcao_produto cp ON vwp.id = cp.produto_id
+WHERE percentual > 1;
+
+/* 10. Trazer todos os produtos que receberão um orçamento no ultimo mês. */
+SELECT * FROM vw_todos_orcamentos WHERE MONTH(data) = (MONTH(CURDATE()) - 1);
