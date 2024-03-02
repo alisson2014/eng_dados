@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION GET_GENDER(sexo CHAR(1))
             WHEN sexo IS NULL THEN SET genero = 'Não informado';
             WHEN sexo = 'f' THEN SET genero = 'Feminino';
             WHEN sexo = 'm' THEN SET genero = 'Masculino';
-            ELSE SET genero = 'Não informado';
+            ELSE SET genero = 'Char inválido';
         END CASE;
         
         RETURN genero;
