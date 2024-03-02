@@ -1,12 +1,12 @@
 # FUNÇÃO PARA OBTER UM VALOR REAL FORMATADO:
 
-DELIMITER //
+DELIMITER $$ 
 
 CREATE FUNCTION CURRENCY_FORMAT(value DECIMAL(8,2)) RETURNS VARCHAR(255)
 BEGIN
     DECLARE currency_format VARCHAR(255);
     SET currency_format = CONCAT('R$ ', FORMAT(value, 2, 'de_DE'));
     RETURN currency_format;
-END //
+END $$ 
 
 DELIMITER ;

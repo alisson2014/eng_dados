@@ -2,7 +2,7 @@ CREATE OR REPLACE VIEW vw_todos_produtos AS
 SELECT 
 	p.id, 
     p.nome, 
-    IF((CURDATE() BETWEEN cp.data_inicio AND cp.data_fim), ROUND(p.valor * cp.percentual, 2), p.valor) AS valorRecalculado,
+    CALCULATE_ADJUSTMENT(p.valor, cp.data_inicio, cp.data_fim, cp.percentual) AS valorFinal,
     p.categoria_id,
     c.nome AS categoria
 FROM produto p
