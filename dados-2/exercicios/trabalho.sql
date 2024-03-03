@@ -79,7 +79,7 @@ SELECT
     p.QUANTIDADE,
     p.VALOR,
     CALCULA_CORRECAO(p.VALOR, cvp.dt_inicio, cvp.dt_fim, CURDATE(), cvp.percentual) AS VALOR_ATUALIZADO,
-    cvp.percentual AS PORCENTAGEM
+    IF(CURDATE() <= cvp.dt_fim AND CURDATE() >= cvp.dt_inicio, cvp.percentual, NULL) AS PORCENTAGEM
 FROM produto p
 	LEFT JOIN correcao_valor_produto cvp ON p.CODIGO_CLASSIFICACAO = cvp.CODIGO_CLASSIFICACAO
 ORDER BY p.CODIGO_CLASSIFICACAO, p.DESCRICAO;
@@ -94,7 +94,7 @@ SELECT
     p.QUANTIDADE,
     p.VALOR,
     CALCULA_CORRECAO(p.VALOR, cvp.dt_inicio, cvp.dt_fim, vd.datavenda, cvp.percentual) AS VALOR_ATUALIZADO,
-    cvp.percentual AS PORCENTAGEM,
+    IF(vd.datavenda <= cvp.dt_fim AND vd.datavenda >= cvp.dt_inicio, cvp.percentual, NULL) AS PORCENTAGEM,
     vd.datavenda
 FROM produto p
 	INNER JOIN itens_venda iv ON p.CODIGO = iv.codproduto
@@ -103,5 +103,22 @@ FROM produto p
 ORDER BY p.CODIGO_CLASSIFICACAO, p.DESCRICAO;
 
 /* 3.3) criar uma view que retorne o valor total da venda com os produtos atualizado; */
+CREATE OR REPLACE VIEW vw_vendas_totais AS
+SELECT 
+	p.DESCRICAO,
+    p.TIPO,
+    p.CODIGO_CLASSIFICACAO,
+    p.UNIDADE,
+    p.QUANTIDADE,
+    p.VALOR,
+    SUM(CALCULA_CORRECAO(p.VALOR, cvp.dt_inicio, cvp.dt_fim, vd.datavenda, cvp.percentual) * p.QUANTIDADE) AS VALOR_VENDA,
+    IF(vd.datavenda <= cvp.dt_fim AND vd.datavenda >= cvp.dt_inicio, cvp.percentual, NULL) AS PORCENTAGEM,
+    vd.datavenda
+FROM produto p
+	INNER JOIN itens_venda iv ON p.CODIGO = iv.codproduto
+	INNER JOIN vendas vd ON iv.codvenda = vd.codvenda
+	LEFT JOIN correcao_valor_produto cvp ON p.CODIGO_CLASSIFICACAO = cvp.CODIGO_CLASSIFICACAO
+GROUP BY vd.codvenda, p.CODIGO
+ORDER BY p.CODIGO_CLASSIFICACAO, vd.datavenda;
 
 COMMIT;
