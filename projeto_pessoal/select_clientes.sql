@@ -4,7 +4,20 @@
     do mais velho até o mais novo.
 */
 
-SELECT * FROM vw_todos_clientes;
+SELECT 
+	vtc.nome_cliente,
+    vtc.cpf,
+    GET_GENDER(vtc.sexo) AS genero,
+    DATE_FORMAT(vtc.data_nascimento, "%d/%m/%Y") AS data_nascimento,
+    IFNULL(vtc.telefone, "SEM REGISTRO") AS telefone,
+    vtc.email,
+    vtc.cep,
+    vtc.logradouro,
+    vtc.bairro,
+    vtc.cidade,
+    vtc.sigla_estado
+FROM vw_todos_clientes vtc
+ORDER BY vtc.data_nascimento;
 
 /* 2. Trazer o total de clientes cadastrados por sexo. */
 
@@ -18,29 +31,34 @@ ORDER BY total_clientes;
 /* 3. Trazer todos os clientes nascidos no ano 2001 */
 
 SELECT 
-    *
-FROM vw_todos_clientes 
-    WHERE YEAR(data_nascimento) = 2001;
+    vtc.*
+FROM vw_todos_clientes vtc
+    WHERE YEAR(vtc.data_nascimento) = 2001;
 
 /* 4. Selecionar todos os clientes que não possuem telefone cadastrado */
 
 SELECT 
-	id_cliente,
-    nome,
-    cpf,
-    genero,
-    DATE_FORMAT(data_nascimento, '%d/%m/%Y') AS dataNascimento,
-    email
-FROM vw_todos_clientes 
-WHERE telefone IS NULL
-ORDER BY id_cliente;
+	vtc.id,
+    vtc.nome_cliente,
+    vtc.cpf,
+    GET_GENDER(vtc.sexo) AS genero,
+    DATE_FORMAT(vtc.data_nascimento, '%d/%m/%Y') AS dataNascimento,
+    vtc.email
+FROM vw_todos_clientes vtc
+WHERE vtc.telefone IS NULL
+ORDER BY vtc.id;
 
 /* 5. Selecionar todos os clientes que usam o host de email 'hotmail' */
 
 SELECT 
-	*
-FROM vw_todos_clientes 
-	WHERE email LIKE '%@hotmail%';
+	vtc.nome_cliente,
+    vtc.cpf,
+    GET_GENDER(vtc.sexo) AS genero,
+    DATE_FORMAT(vtc.data_nascimento, "%d/%m/%Y") AS data_nascimento,
+    IFNULL(vtc.telefone, "SEM REGISTRO") AS telefone,
+    vtc.email
+FROM vw_todos_clientes vtc
+	WHERE vtc.email LIKE '%@hotmail%';
 
 /* 6. Selecionar todos os clientes que moram no estado do paraná. */
 
@@ -68,12 +86,12 @@ FROM vw_todos_clientes
 
 SELECT 
 	'gmail' as host,
-	COUNT(id_cliente) AS total
+	COUNT(id) AS total
 FROM vw_todos_clientes 
 WHERE email LIKE '%@gmail%'
 UNION 
 SELECT
 	'hotmail' AS host,
-   	COUNT(id_cliente) AS total
+   	COUNT(id) AS total
 FROM vw_todos_clientes 
 WHERE email LIKE '%@hotmail%';

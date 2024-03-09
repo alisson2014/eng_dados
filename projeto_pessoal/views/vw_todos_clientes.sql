@@ -1,9 +1,9 @@
 CREATE OR REPLACE VIEW vw_todos_clientes AS
 SELECT 
-    c.id AS id_cliente,
-	c.nome,
+    c.id,
+	c.nome AS nome_cliente,
     c.cpf,
-    GET_GENDER(c.sexo) AS genero,
+    c.sexo,
     c.data_nascimento,
     c.telefone,
     c.email,
