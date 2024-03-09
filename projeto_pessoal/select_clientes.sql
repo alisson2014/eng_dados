@@ -95,3 +95,33 @@ SELECT
    	COUNT(id) AS total
 FROM vw_todos_clientes 
 WHERE email LIKE '%@hotmail%';
+
+/* 9. Selecione todos os clientes que tem entre 19 e 22 anos de idade. */
+
+SELECT 
+	vtc.id,
+	vtc.nome_cliente,
+    DATE_FORMAT(vtc.data_nascimento, "%d/%m/%Y") AS data_nascimento,
+    GET_GENDER(vtc.sexo) AS genero,
+    vtc.email,
+    vtc.cep,
+	TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) AS idade 
+FROM vw_todos_clientes vtc
+HAVING idade BETWEEN 19 AND 22
+ORDER BY idade;
+
+/* 10. Selecione todos os clientes que possuem telefone cadastrados e morem no parana. Estes clientes tem que ter mais de 22 anos. */
+
+SELECT 
+	vtc.id,
+	vtc.nome_cliente,
+    DATE_FORMAT(vtc.data_nascimento, "%d/%m/%Y") AS data_nascimento,
+    GET_GENDER(vtc.sexo) AS genero,
+    vtc.email,
+    vtc.cep,
+    vtc.telefone,
+	TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) AS idade 
+FROM vw_todos_clientes vtc
+WHERE telefone IS NOT NULL AND vtc.sigla_estado = 'PR'
+HAVING idade > 22
+ORDER BY id;
